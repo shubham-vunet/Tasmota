@@ -1396,3 +1396,135 @@
 #endif // USE_I2S_ALL
 
 #endif  // _MY_USER_CONFIG_H_
+
+
+#ifndef _USER_CONFIG_OVERRIDE_H_
+#define _USER_CONFIG_OVERRIDE_H_
+
+#endif  // _USER_CONFIG_OVERRIDE_H_
+
+#undef USE_IR_SEND_RC6
+#undef USE_IR_SEND_RC5
+#undef USE_DHT
+
+#undef USE_ENERGY_SENSOR
+#undef USE_ENERGY_MARGIN_DETECTION
+#undef USE_ENERGY_POWER_LIMIT
+#undef USE_ENERGY_DUMMY
+#undef USE_HLW8012
+#undef USE_CSE7766
+#undef USE_PZEM004T
+#undef USE_PZEM_AC
+#undef USE_PZEM_DC
+#undef USE_MCP39F501
+#undef SDM72_SPEED
+#undef SDM120_SPEED
+#undef SDM230_SPEED
+#undef SDM630_SPEED
+#undef DDS2382_SPEED
+#undef DDSU666_SPEED
+#undef SOLAXX1_SPEED
+#undef LE01MR_SPEED
+#undef LE01MR_ADDR
+#undef USE_BL09XX
+#undef IEM3000_SPEED
+#undef IEM3000_ADDR
+
+
+#undef USE_ENERGY_SENSOR
+#undef USE_ENERGY_MARGIN_DETECTION
+#undef USE_ENERGY_POWER_LIMIT
+#undef USE_ENERGY_DUMMY
+#undef USE_HLW8012
+#undef USE_CSE7766
+#undef USE_PZEM004T
+#undef USE_PZEM_AC
+#undef USE_PZEM_DC
+#undef USE_MCP39F501
+#undef SDM72_SPEED
+#undef SDM120_SPEED
+#undef SDM230_SPEED
+#undef SDM630_SPEED
+#undef DDS2382_SPEED
+#undef DDSU666_SPEED
+#undef SOLAXX1_SPEED
+#undef LE01MR_SPEED
+#undef LE01MR_ADDR
+#undef USE_BL09XX
+#undef IEM3000_SPEED
+#undef IEM3000_ADDR
+
+
+#define MATTER_ENABLED    true                    // [SetOption151] Is Matter enabled by default
+#define USE_SHIFT595                             // Add support for 74xx595 8-bit shift registers (+0k7 code)
+
+#define USE_RTC_CHIPS                          // Enable RTC chip support and NTP server - Select only one
+#define DISABLE_NTP_TIME
+#define USE_DS3231                           // [I2cDriver26] Enable DS3231 RTC - used by Ulanzi TC001 (I2C address 0x68) (+1k2 code)
+#define USE_RTC_ADDR 0x51
+
+#undef USE_MY92X1
+#undef USE_SM16716
+#undef USE_SM2135
+#undef USE_SM2335
+#undef USE_BP1658CJ
+#undef USE_BP5758D
+#undef USE_SONOFF_L1
+#undef USE_ELECTRIQ_MOODL
+
+#undef USE_SONOFF_D1
+#undef USE_SHELLY_DIMMER
+#undef SHELLY_CMDS
+#undef SHELLY_FW_UPGRADE
+
+#undef ROTARY_V1
+#undef ROTARY_MAX_STEPS
+#undef USE_SONOFF_RF
+#undef USE_RF_FLASH
+#undef USE_SONOFF_SC
+#undef USE_TUYA_MCU
+#undef TUYA_DIMMER_ID
+#undef USE_TUYA_TIME
+#undef USE_TUYAMCUBR
+#undef USE_ARMTRONIX_DIMMERS
+#undef USE_PS_16_DZ
+#undef USE_SONOFF_IFAN
+
+#undef WEBSERVER_ADVERTISE
+
+#define USER_RULE1 "ON Power6#State DO Led6 0,4,0 ENDON ON Power6#State=0 DO Led6 2,0,0 ENDON ON Power6#Button DO Led6 25,25,0 ENDON ON Power7#State DO Led5 0,4,0 ENDON ON Power7#State=0 DO Led5 2,0,0 ENDON ON Power7#Button DO Led5 25,25,0 ENDON ON Power3#State DO Led4 0,4,0 ENDON ON Power3#State=0 DO Led4 2,0,0 ENDON ON Power3#Button DO Led4 25,25,0 ENDON ON Power5#State DO Led3 0,4,0 ENDON ON Power5#State=0 DO Led3 2,0,0 ENDON ON Power5#Button DO Led3 25,25,0 ENDON ON Power4#State DO Led2 0,4,0 ENDON ON Power4#State=0 DO Led2 2,0,0 ENDON ON Power4#Button DO Led2 25,25,0 ENDON ON Power1#State DO Led1 0,4,0 ENDON ON Power1#State=0 DO Led1 2,0,0 ENDON ON Power1#Button DO Led1 25,25,0 ENDON"          // Add rule1 data saved at initial firmware load or when command reset is executed
+#define USER_RULE2 ""          // Add rule2 data saved at initial firmware load or when command reset is executed
+
+#define USE_GPIO_VIEWER                        // Enable GPIO Viewer to see realtime GPIO states (+6k code)
+   #define GV_SAMPLING_INTERVAL  100            // [GvSampling] milliseconds - Use Tasmota Scheduler (100) or Ticker (20..99,101..1000)
+
+#undef USE_KNX
+#undef USE_TASMOTA_DISCOVERY
+
+
+#define USE_HOME_ASSISTANT                                   // Enable Home Assistant Discovery Support (+12k code, +6 bytes mem)
+#define HOME_ASSISTANT_DISCOVERY_PREFIX   "homeassistant"  // Home Assistant discovery prefix
+#define HOME_ASSISTANT_LWT_TOPIC   "homeassistant/status"  // home Assistant Birth and Last Will Topic (default = homeassistant/status)
+#define HOME_ASSISTANT_LWT_SUBSCRIBE    true               // Subscribe to Home Assistant Birth and Last Will Topic (default = true)
+
+#undef USE_DOMOTICZ
+
+#define WS2812_LEDS            6                // [Pixels] Number of WS2812 LEDs to start with (max is 512)
+#define LATITUDE               0         // [Latitude] Your location to be used with sunrise and sunset
+#define LONGITUDE              41.2281          // [Longitude] Your location to be used with sunrise and sunset
+#define APP_TIMEZONE           330                 // [Timezone] +1 hour (Amsterdam) (-13 .. 14 = hours from UTC, 99 = use TIME_DST/TIME_STD)
+
+#define NTP_SERVER1      "1.in.pool.ntp.org"        // [NtpServer1] Select first NTP server by name or IP address (135.125.104.101, 2001:418:3ff::53)
+#define NTP_SERVER2      "2.in.pool.ntp.org"        // [NtpServer1] Select first NTP server by name or IP address (135.125.104.101, 2001:418:3ff::53)
+#define GUI_SHOW_HOSTNAME      true             // [SetOption53] Show hostname and IP address in GUI main menu
+
+#define MQTT_USE               true              // [SetOption3] Select default MQTT use (false = Off, true = On)
+#undef  MQTT_HOST
+#define MQTT_HOST              "10.10.0.253"                // [MqttHost]
+#define MQTT_USER              "trelay"       // [MqttUser] MQTT user
+#define MQTT_PASS              "********"       // [MqttPassword] MQTT password
+
+#undef  STA_SSID1
+#define STA_SSID1              "IoT"                // [Ssid1] Wi-Fi SSID
+#undef STA_PASS1
+#define STA_PASS1              "********"                // [Password1] Wi-Fi password

@@ -1,0 +1,36 @@
+name: Tasmota CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: development
+
+jobs:
+  base-images:
+    runs-on: ubuntu-latest
+    if: github.repository == 'shubham-vunet/Tasmota'
+    strategy:
+      fail-fast: true
+      matrix:
+        variant:
+          - tasmota32s3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          pip install wheel
+          #python -m pip install --upgrade pip
+          pip install -U platformio
+          #platformio upgrade --dev
+          #platformio update
+          cp ./platformio_override_sample.ini ./platformio_override.ini
+      - name: Run PlatformIO
+        run: platformio run -e ${{ matrix.variant }}
+      - uses: jason2866/upload-artifact@v2.0.3
+        with:
+          name: firmware
+          path: ./build_output
