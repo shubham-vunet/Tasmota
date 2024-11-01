@@ -75,7 +75,11 @@ void Shift595SwitchRelay(void) {
   if (Shift595 && Shift595->connected == true) {
     for (uint32_t i = 0; i < Shift595->outputs; i++) {
       uint8_t relay_state = bitRead(XdrvMailbox.index, Shift595->first + Shift595->outputs -1 -i);
-      digitalWrite(Shift595->pinSER, Settings->flag5.shift595_invert_outputs ? !relay_state : relay_state);
+      if(i == 4){
+        digitalWrite(Shift595->pinSER, Settings->flag5.shift595_invert_outputs ? relay_state : !relay_state);
+      }else{
+        digitalWrite(Shift595->pinSER, Settings->flag5.shift595_invert_outputs ? !relay_state : relay_state);
+      }
       Shift595LatchPin(Shift595->pinSRCLK);
     }
 
