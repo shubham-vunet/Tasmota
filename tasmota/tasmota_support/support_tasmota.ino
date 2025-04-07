@@ -466,7 +466,11 @@ void SetPowerOnState(void)
   for (uint32_t i = 0; i < TasmotaGlobal.devices_present; i++) {
 #ifdef ESP8266
     if (!Settings->flag3.no_power_feedback &&  // SetOption63 - Don't scan relay power state at restart - #5594 and #5663
-        !TasmotaGlobal.power_on_delay) {       // SetOption47 - Delay switching relays to reduce power surge at power on
+        !TasmotaGlobal.power_on_delay          // SetOption47 - Delay switching relays to reduce power surge at power on
+#ifdef USE_SHUTTER
+        && !Settings->flag3.shutter_mode       // SetOption80 - Enable shutter support
+#endif // USE_SHUTTER
+       ) {
       if ((port < MAX_RELAYS) && PinUsed(GPIO_REL1, port)) {
         if (bitRead(TasmotaGlobal.rel_bistable, port)) {
           port++;                              // Skip both bistable relays as always 0
@@ -1172,6 +1176,9 @@ void PerformEverySecond(void)
 #ifdef SYSLOG_UPDATE_SECOND
   SyslogAsync(false);
 #endif  // SYSLOG_UPDATE_SECOND
+#ifdef USE_UFILESYS
+  FileLoggingAsync(false);
+#endif  // USE_UFILESYS
 
   ResetGlobalValues();
 
@@ -1342,6 +1349,9 @@ void Every250mSeconds(void)
   // Check if log refresh needed in case of fast buffer fill
   MqttPublishLoggingAsync(true);
   SyslogAsync(true);
+#ifdef USE_UFILESYS
+  FileLoggingAsync(true);
+#endif  // USE_UFILESYS
 
 /*-------------------------------------------------------------------------------------------*\
  * Every second at 0.25 second interval
@@ -1489,12 +1499,11 @@ void Every250mSeconds(void)
         Response_P(PSTR("{\"" D_CMND_UPGRADE "\":\""));
         if (ota_result) {
           ResponseAppend_P(PSTR(D_JSON_SUCCESSFUL ". " D_JSON_RESTARTING));
-          TasmotaGlobal.restart_flag = 2;
+          TasmotaGlobal.restart_flag = 5;                 // Allow time for webserver to update console
         } else {
           ResponseAppend_P(PSTR(D_JSON_FAILED " %s"), ESPhttpUpdate.getLastErrorString().c_str());
         }
         ResponseAppend_P(PSTR("\"}"));
-//        TasmotaGlobal.restart_flag = 2;                   // Restart anyway to keep memory clean webserver
         MqttPublishPrefixTopicRulesProcess_P(STAT, PSTR(D_CMND_UPGRADE));
         AllowInterrupts(1);
       }
@@ -1624,7 +1633,7 @@ void Every250mSeconds(void)
         if (1 == RtcSettings.ota_loader) {
           RtcSettings.ota_loader = 0;
           AddLog(LOG_LEVEL_DEBUG, PSTR("OTA: Propagating upload"));
-          TasmotaGlobal.ota_state_flag = 3;
+          TasmotaGlobal.ota_state_flag = 6;               // Allow time for webserver to update console
         }
 #endif  // FIRMWARE_MINIMAL
 
@@ -1765,8 +1774,11 @@ void ArduinoOtaLoop(void)
 
 /********************************************************************************************/
 
-void SerialInput(void)
-{
+void SerialInput(void) {
+#ifdef USE_XYZMODEM
+  if (XYZModemActive(TXMP_TASCONSOLE)) { return; }
+#endif  // USE_XYZMODEM
+
   static uint32_t serial_polling_window = 0;
   static bool serial_buffer_overrun = false;
 
@@ -1801,6 +1813,12 @@ void SerialInput(void)
       Serial.flush();
       return;
     }
+
+/*-------------------------------------------------------------------------------------------*/
+
+#ifdef USE_XYZMODEM
+    if (XYZModemStart(TXMP_TASCONSOLE, TasmotaGlobal.serial_in_byte)) { return; }
+#endif  // USE_XYZMODEM
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -1861,7 +1879,7 @@ void SerialInput(void)
 
     if (!Settings->flag.mqtt_serial && (TasmotaGlobal.serial_in_byte == '\n')) {   // CMND_SERIALSEND and CMND_SERIALLOG
       TasmotaGlobal.serial_in_buffer[TasmotaGlobal.serial_in_byte_counter] = 0;    // Serial data completed
-      TasmotaGlobal.seriallog_level = (Settings->seriallog_level < LOG_LEVEL_INFO) ? (uint8_t)LOG_LEVEL_INFO : Settings->seriallog_level;
+      SetMinimumSeriallog();
       if (serial_buffer_overrun) {
         AddLog(LOG_LEVEL_INFO, PSTR(D_LOG_COMMAND "Serial buffer overrun"));
       } else {
@@ -1914,11 +1932,19 @@ void SerialInput(void)
 String console_buffer = "";
 
 void TasConsoleInput(void) {
+#ifdef USE_XYZMODEM
+  if (XYZModemActive(TXMP_TASCONSOLE)) { return; }
+#endif  // USE_XYZMODEM
+
   static bool console_buffer_overrun = false;
 
   while (TasConsole.available()) {
     delay(0);
     char console_in_byte = TasConsole.read();
+
+#ifdef USE_XYZMODEM
+    if (XYZModemStart(TXMP_TASCONSOLE, console_in_byte)) { return; }
+#endif  // USE_XYZMODEM
 
     if (isprint(console_in_byte)) {                       // Any char between 32 and 127
       if (console_buffer.length() < INPUT_BUFFER_SIZE) {  // Add char to string if it still fits
@@ -1928,7 +1954,7 @@ void TasConsoleInput(void) {
       }
     }
     else if (console_in_byte == '\n') {
-      TasmotaGlobal.seriallog_level = (Settings->seriallog_level < LOG_LEVEL_INFO) ? (uint8_t)LOG_LEVEL_INFO : Settings->seriallog_level;
+      SetMinimumSeriallog();
       if (console_buffer_overrun) {
         AddLog(LOG_LEVEL_INFO, PSTR(D_LOG_COMMAND "USB buffer overrun"));
       } else {

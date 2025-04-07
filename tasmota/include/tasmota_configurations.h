@@ -173,6 +173,7 @@
 //#define USE_MAX17043                           // [I2cDriver83] Enable MAX17043 fuel-gauge systems Lipo batteries sensor (I2C address 0x36) (+0k9 code)
 //#define USE_AMSX915                            // [I2CDriver86] Enable AMS5915/AMS6915 pressure/temperature sensor (+1k2 code)
 //#define USE_SPL06_007                          // [I2cDriver87] Enable SPL06_007 pressure and temperature sensor (I2C addresses 0x76) (+2k5 code)
+//#define USE_MS5837                             // [I2cDriver91] Enable MS5837 sensor (I2C address 0x76) (+2k7 code)
 
 //#define USE_RTC_CHIPS                          // Enable RTC chip support and NTP server - Select only one
 //  #define USE_DS3231                           // [I2cDriver26] Enable DS3231 RTC (I2C address 0x68) (+1k2 code)
@@ -850,8 +851,6 @@
   #define CODE_IMAGE_STR "minimal"
 #endif
 
-#define FIRMWARE_MINIMAL_ONLY
-
 #undef FIRMWARE_LITE                             // Disable tasmota-lite with no sensors
 #undef FIRMWARE_SENSORS                          // Disable tasmota-sensors with useful sensors enabled
 #undef FIRMWARE_KNX_NO_EMULATION                 // Disable tasmota-knx with KNX but without Emulation
@@ -1006,8 +1005,7 @@
 #undef USE_PING
 #undef USE_AUTOCONF
 #undef USE_BERRY
-//#undef USE_WEBCLIENT
-//#undef USE_WEBCLIENT_HTTPS
+#undef USE_WEBCLIENT_HTTPS
 
 #endif  // FIRMWARE_MINICUSTOM
 
@@ -1058,7 +1056,7 @@
     #define USE_UFILESYS
       #define GUI_TRASH_FILE
       #define GUI_EDIT_FILE
-    #ifdef ESP8266_4M
+    #ifdef ESP8266
       #ifndef USE_FTP
         #define USE_FTP
       #endif
@@ -1068,7 +1066,7 @@
       #ifndef PW_FTP
         #define PW_FTP "pass"
       #endif
-    #endif // ESP8266_4M
+    #endif // ESP8266
     #define USE_SPI
     #define USE_SDCARD
     #define USE_PING
