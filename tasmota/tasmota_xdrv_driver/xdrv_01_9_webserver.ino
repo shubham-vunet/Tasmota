@@ -36,6 +36,14 @@
 #define EXTERNAL_WEB_CSS_URL ""
 #endif
 
+#ifndef EXTERNAL_WEB_JS_URL
+#define EXTERNAL_WEB_JS_URL ""
+#endif
+
+#ifndef FIRMWARE_AUTHOR_LABEL
+#define FIRMWARE_AUTHOR_LABEL "Theo Arends"
+#endif
+
 #ifndef WIFI_SOFT_AP_CHANNEL
 #define WIFI_SOFT_AP_CHANNEL                      1      // Soft Access Point Channel number between 1 and 11 as used by WifiManager web GUI
 #endif
@@ -428,7 +436,7 @@ const char HTTP_COUNTER[] PROGMEM =
   "<br><div id='t' style='text-align:center;'></div>";
 
 const char HTTP_END[] PROGMEM =
-  "<p></p><div style='text-align:right;font-size:11px;'><hr><a href='https://github.com/arendst/Tasmota' target='_blank' style='color:#aaa;'>Tasmota %s %s " D_BY " Theo Arends</a></div>"
+  "<p></p><div style='text-align:right;font-size:11px;'><hr><a href='https://github.com/arendst/Tasmota' target='_blank' style='color:#aaa;'>Tasmota %s %s " D_BY " " FIRMWARE_AUTHOR_LABEL "</a></div>"
   "</div>"
   "</body>"
   "</html>";
@@ -1061,6 +1069,9 @@ void WSContentSendStyle_P(const char* formatP, ...) {
     (Settings->flag6.gui_device_name) ? "" : SettingsTextEscaped(SET_DEVICENAME).c_str());      // SetOption163 - (GUI) Disable display of GUI device name (1)
 
 #endif // FIRMWARE_MINIMAL
+  if (strlen(EXTERNAL_WEB_JS_URL)) {
+    WSContentSend_P(PSTR("<script src='%s' defer></script>"), EXTERNAL_WEB_JS_URL);
+  }
 
   // SetOption53 - Show hostname and IP address in GUI main menu
 #if (RESTART_AFTER_INITIAL_WIFI_CONFIG)
@@ -1750,15 +1761,20 @@ void HandleRoot(void) {
 
   // Init buttons 
   uint32_t max_devices = TasmotaGlobal.devices_present;
+  bool is_ifan = false;
 
 #ifdef USE_SONOFF_IFAN
-  if (IsModuleIfan()) { 
+  is_ifan = IsModuleIfan();
+  if (is_ifan) { 
     max_devices = MaxFanspeed() +1;  // 4 -> 5
   }
 #endif  // USE_SONOFF_IFAN
 
   bool use_script = false;
   for (uint32_t idx = 1; idx <= max_devices; idx++) {
+    if (!is_ifan && IsWebButtonHidden(idx)) {
+      continue;  // Skip hidden homepage buttons ("-")
+    }
     bool not_active = !bitRead(TasmotaGlobal.power, idx -1);
 
 #ifdef USE_SONOFF_IFAN
@@ -1943,10 +1959,12 @@ bool HandleRootStatusRefresh(void) {
   if (TasmotaGlobal.devices_present) {
     // Update changed web buttons
     uint32_t max_devices = TasmotaGlobal.devices_present;
+    bool is_ifan = false;
 
 #ifdef USE_SONOFF_IFAN
     uint32_t fanspeed;
-    if (IsModuleIfan()) {
+    is_ifan = IsModuleIfan();
+    if (is_ifan) {
       // Single power relay and four virtual buttons
       max_devices = MaxFanspeed() +1;  // 4 -> 5
       fanspeed = GetFanspeed() +2;     // 0..3 -> 2..5
@@ -1956,6 +1974,9 @@ bool HandleRootStatusRefresh(void) {
     WSContentSend_P(HTTP_MSG_EXEC_JAVASCRIPT);  // "<img style='display:none;' src onerror=\""
     msg_exec_javascript = true;
     for (uint32_t idx = 1; idx <= max_devices; idx++) {
+      if (!is_ifan && IsWebButtonHidden(idx)) {
+        continue;  // Skip hidden homepage buttons ("-")
+      }
       bool active = bitRead(TasmotaGlobal.power, idx -1);
 
 #ifdef USE_SONOFF_IFAN
@@ -2083,8 +2104,15 @@ bool HandleRootStatusRefresh(void) {
     if (!Web.buttons_non_light_non_shutter) {        // Might still be zero on restart so chk if we have at least one 
       WebGetDeviceCounts();
     }
-    if ((Web.buttons_non_light_non_shutter > 0) &&
-       ( Web.buttons_non_light_non_shutter <= 8)) {  // We need at least one non light AND non shutter button
+    uint32_t visible_non_light_buttons = 0;
+    for (uint32_t button_idx = 1; button_idx <= TasmotaGlobal.devices_present; button_idx++) {
+      if (bitRead(Web.light_shutter_button_mask, button_idx -1)) { continue; }  // Skip light/shutter mapped buttons
+      if (IsWebButtonHidden(button_idx)) { continue; }                           // Skip hidden homepage buttons ("-")
+      visible_non_light_buttons++;
+    }
+
+    if ((visible_non_light_buttons > 0) &&
+       (visible_non_light_buttons <= 8)) {  // We need at least one visible non light AND non shutter button
       WSContentSend_P(PSTR("{t}<tr>"));
 #ifdef USE_SONOFF_IFAN
       if (IsModuleIfan()) {
@@ -2102,11 +2130,12 @@ bool HandleRootStatusRefresh(void) {
           (fanspeed) ? svalue : GetStateText(0));
       } else {
 #endif  // USE_SONOFF_IFAN
-        uint32_t cols = Web.buttons_non_light_non_shutter;
+        uint32_t cols = visible_non_light_buttons;
         uint32_t fontsize = (cols < 5) ? 70 - (cols * 8) : 32;
         uint32_t button_ptr = 0;
         for (uint32_t button_idx = 1; button_idx <= TasmotaGlobal.devices_present; button_idx++) {
           if (bitRead(Web.light_shutter_button_mask, button_idx -1)) { continue; }  // Skip non-sequential shutter button
+          if (IsWebButtonHidden(button_idx)) { continue; }                           // Skip hidden homepage buttons ("-")
           bool power_state = bitRead(TasmotaGlobal.power, button_idx -1);
           snprintf_P(svalue, sizeof(svalue), PSTR("%d"), power_state);
           WSContentSend_P(HTTP_DEVICE_STATE,
@@ -2115,7 +2144,7 @@ bool HandleRootStatusRefresh(void) {
             fontsize,
             (cols < 5) ? GetStateText(power_state) : svalue);
           button_ptr++;
-          if (button_ptr >= Web.buttons_non_light_non_shutter) { break; }
+          if (button_ptr >= visible_non_light_buttons) { break; }
         }
 #ifdef USE_SONOFF_IFAN
       }

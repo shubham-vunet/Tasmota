@@ -36,5 +36,10 @@
 
 // Load external CSS for Tasmota web UI.
 #define EXTERNAL_WEB_CSS_URL   "https://assets.cossth.com/tasmota/styles.css"
+// Load external JavaScript for Tasmota web UI.
+#define EXTERNAL_WEB_JS_URL    "https://assets.cossth.com/tasmota/script.js"
+
+// Custom firmware author text shown in the web footer.
+#define FIRMWARE_AUTHOR_LABEL  "Shubham Sharma"
 
 #endif  // _USER_CONFIG_OVERRIDE_H_
