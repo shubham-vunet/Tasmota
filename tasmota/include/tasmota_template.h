@@ -3411,16 +3411,19 @@ const mytmplt kModules[] PROGMEM = {
 // Supported hardware modules
 enum SupportedModulesESP32S3 {
   WEMOS,
+  TRELAY_S3,
   MAXMODULE };
 
 // Default module settings
 const uint8_t kModuleNiceList[] PROGMEM = {
   WEMOS,
+  TRELAY_S3,
 };
 
 // !!! Update this list in the same order as kModuleNiceList !!!
 const char kModuleNames[] PROGMEM =
   "ESP32S3|"
+  "TRelay S3|"
   ;
 
 // !!! Update this list in the same order as SupportedModulesESP32S2 !!!
@@ -3469,6 +3472,58 @@ const mytmplt kModules[] PROGMEM = {
     AGPIO(GPIO_USER),            // 40      IO                  MTDO, GPIO40, CLK_OUT2
     AGPIO(GPIO_USER),            // 41      IO                  MTDI, GPIO41, CLK_OUT1
     AGPIO(GPIO_USER),            // 42      IO                  MTMS, GPIO42
+    AGPIO(GPIO_USER),            // 43      IO                  U0TXD, GPIO43, CLK_OUT1
+    AGPIO(GPIO_USER),            // 44      IO                  U0RXD, GPIO44, CLK_OUT2
+    AGPIO(GPIO_USER),            // 45      IO                  GPIO45, Strapping
+    AGPIO(GPIO_USER),            // 46      IO                  GPIO46, Strapping
+    AGPIO(GPIO_USER),            // 47      IO                  SPICLK_P_DIFF, GPIO47, SUBSPICLK_P_DIFF
+    AGPIO(GPIO_USER),            // 48      IO                  SPICLK_N_DIFF, GPIO48, SUBSPICLK_N_DIFF
+    0                            // Flag
+  },
+  {                              // TRelay S3 - LilyGO T-Relay ESP32-S3
+    AGPIO(GPIO_KEY1),            // 0       IO                  Button
+    AGPIO(GPIO_USER),            // 1       AO                  RTC_GPIO1, GPIO1, TOUCH1, ADC1_CH0
+    AGPIO(GPIO_USER),            // 2       AO                  RTC_GPIO2, GPIO2, TOUCH2, ADC1_CH1
+    AGPIO(GPIO_USER),            // 3       AO                  RTC_GPIO3, GPIO3, TOUCH3, ADC1_CH2, Strapping
+    AGPIO(GPIO_USER),            // 4       AO                  RTC_GPIO4, GPIO4, TOUCH4, ADC1_CH3
+    AGPIO(GPIO_USER),            // 5       AO                  RTC_GPIO5, GPIO5, TOUCH5, ADC1_CH4
+    AGPIO(GPIO_USER),            // 6       AO                  RTC_GPIO6, GPIO6, TOUCH6, ADC1_CH5
+    AGPIO(GPIO_USER),            // 7       AO                  RTC_GPIO7, GPIO7, TOUCH7, ADC1_CH6
+    AGPIO(GPIO_USER),            // 8       AO                  RTC_GPIO8, GPIO8, TOUCH8, ADC1_CH7, SUBSPICS1
+    AGPIO(GPIO_USER),            // 9       AO                  RTC_GPIO9, GPIO9, TOUCH9, ADC1_CH8, SUBSPIHD, FSPIHD
+    AGPIO(GPIO_USER),            // 10      AO                  RTC_GPIO10, GPIO10, TOUCH10, ADC1_CH9, FSPIIO4, SUBSPICS0, FSPICS0
+    AGPIO(GPIO_USER),            // 11      AO                  RTC_GPIO11, GPIO11, TOUCH11, ADC2_CH0, FSPIIO5, SUBSPID, FSPID
+    AGPIO(GPIO_USER),            // 12      AO                  RTC_GPIO12, GPIO12, TOUCH12, ADC2_CH1, FSPIIO6, SUBSPICLK, FSPICLK
+    AGPIO(GPIO_USER),            // 13      AO                  RTC_GPIO13, GPIO13, TOUCH13, ADC2_CH2, FSPIIO7, SUBSPIQ, FSPIQ
+    AGPIO(GPIO_USER),            // 14      AO                  RTC_GPIO14, GPIO14, TOUCH14, ADC2_CH3, FSPIDQS, SUBSPIWP, FSPIWP
+    AGPIO(GPIO_USER),            // 15      AO                  RTC_GPIO15, GPIO15, U0RTS, ADC2_CH4, XTAL_32K_P
+    AGPIO(GPIO_USER),            // 16      AO                  RTC_GPIO16, GPIO16, U0CTS, ADC2_CH5, XTAL_32K_N
+    AGPIO(GPIO_USER),            // 17      AO                  RTC_GPIO17, GPIO17, U1TXD, ADC2_CH6
+    AGPIO(GPIO_USER),            // 18      AO                  RTC_GPIO18, GPIO18, U1RXD, ADC2_CH7, CLK_OUT3
+    AGPIO(GPIO_USER),            // 19      AO                  RTC_GPIO19, GPIO19, U1RTS, ADC2_CH8, CLK_OUT2, USB_D­
+    AGPIO(GPIO_USER),            // 20      AO                  RTC_GPIO20, GPIO20, U1CTS, ADC2_CH9, CLK_OUT1, USB_D+
+    AGPIO(GPIO_SHIFT595_SER),    // 21      IO                  74x595 SER
+                                 // 22      --                  Unused
+                                 // 23      --                  Unused
+                                 // 24      --                  Unused
+                                 // 25      --                  Unused
+                                 // 26      FL                  SPICS1, GPIO26
+                                 // 27      FL                  SPIHD, GPIO27
+                                 // 28      FL                  SPIWP, GPIO28
+                                 // 29      FL                  SPICS0, GPIO29
+                                 // 30      FL                  SPICLK, GPIO30
+                                 // 31      FL                  SPIQ, GPIO31
+                                 // 32      FL                  SPID, GPIO32
+    AGPIO(GPIO_NONE),            // 33      IO                  SPIIO4, GPIO33, FSPIHD, SUBSPIHD
+    AGPIO(GPIO_NONE),            // 34      IO                  SPIIO5, GPIO34, FSPICS0, SUBSPICS0
+    AGPIO(GPIO_NONE),            // 35      IO                  SPIIO6, GPIO35, FSPID, SUBSPID
+    AGPIO(GPIO_NONE),            // 36      IO                  SPIIO7, GPIO36, FSPICLK, SUBSPICLK
+    AGPIO(GPIO_NONE),            // 37      IO                  SPIDQS, GPIO37, FSPIQ, SUBSPIQ
+    AGPIO(GPIO_USER),            // 38      IO                  GPIO38, FSPIWP, SUBSPIWP
+    AGPIO(GPIO_USER),            // 39      IO                  MTCK, GPIO39, CLK_OUT3, SUBSPICS1
+    AGPIO(GPIO_SHIFT595_RCLK),   // 40      IO                  74x595 RCLK
+    AGPIO(GPIO_SHIFT595_SRCLK),  // 41      IO                  74x595 SRCLK
+    AGPIO(GPIO_SHIFT595_OE),     // 42      IO                  74x595 OE
     AGPIO(GPIO_USER),            // 43      IO                  U0TXD, GPIO43, CLK_OUT1
     AGPIO(GPIO_USER),            // 44      IO                  U0RXD, GPIO44, CLK_OUT2
     AGPIO(GPIO_USER),            // 45      IO                  GPIO45, Strapping

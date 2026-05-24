@@ -13,7 +13,7 @@ class TRelayBleRemote : Driver
 
   def init()
     self._sub_topic = "tele/#"
-    self._cfg_key = "trelay_s3_cfg_v1"
+    self._cfg_key = "trelay_s3_cfg_v2"
 
     if !persist.find(self._cfg_key, 0)
       self.apply_defaults_once()
@@ -28,6 +28,10 @@ class TRelayBleRemote : Driver
   end
 
   def apply_defaults_once()
+    # Ensure T-Relay S3 board GPIO assignments are active (GPIO0 button +
+    # 74x595 pins on GPIO21/40/41/42) and keep one shift-register device.
+    tasmota.cmd("Backlog Shift595DeviceCount 1; Module 1", true)
+
     # Friendly names
     tasmota.cmd("FriendlyName1 TRelay S3", true)
     tasmota.cmd("FriendlyName2 Power Socket", true)
