@@ -32,6 +32,10 @@
 
 #define USE_CONSOLE_CSS_FLEX
 
+#ifndef EXTERNAL_WEB_CSS_URL
+#define EXTERNAL_WEB_CSS_URL ""
+#endif
+
 #ifndef WIFI_SOFT_AP_CHANNEL
 #define WIFI_SOFT_AP_CHANNEL                      1      // Soft Access Point Channel number between 1 and 11 as used by WifiManager web GUI
 #endif
@@ -1043,6 +1047,9 @@ void WSContentSendStyle_P(const char* formatP, ...) {
 //    WSContentSend_P(PSTR("body{background:%s;background-repeat:no-repeat;background-attachment:fixed;background-size:cover;}"), SettingsText(SET_CANVAS));
     WSContentSend_P(PSTR("body{background:%s 0 0 / cover no-repeat fixed;}"), SettingsText(SET_CANVAS));
   }
+  if (strlen(EXTERNAL_WEB_CSS_URL)) {
+    WSContentSend_P(PSTR("@import url('%s');"), EXTERNAL_WEB_CSS_URL);
+  }
 #ifdef FIRMWARE_MINIMAL
   WSContentSend_P(HTTP_HEAD_STYLE3_MINIMAL,
     (Web.initial_config) ? "" : (Settings->flag5.gui_module_name) ? "" : ModuleName().c_str(),  // SetOption141 - (GUI) Disable display of GUI module name (1)
@@ -1364,6 +1371,26 @@ int32_t IsShutterWebButton(uint32_t idx) {
 
 /*-------------------------------------------------------------------------------------------*/
 
+bool IsWebButtonHidden(uint32_t button_idx) {
+  if ((0 == button_idx) || (button_idx > MAX_BUTTON_TEXT)) {
+    return false;
+  }
+
+  const char *text = GetWebButton(button_idx -1);
+  if (!text || !text[0]) {
+    return false;
+  }
+
+  // Skip leading spaces/tabs so " -" is also treated as hidden.
+  while ((' ' == *text) || ('\t' == *text)) {
+    text++;
+  }
+
+  return (('-' == text[0]) && ('\0' == text[1]));
+}
+
+/*-------------------------------------------------------------------------------------------*/
+
 void WebGetDeviceCounts(void) {
   Web.buttons_non_light_non_shutter = TasmotaGlobal.devices_present;
   Web.light_shutter_button_mask = 0;       // Bitmask for each light and/or shutter button
@@ -1486,45 +1513,57 @@ void HandleRoot(void) {
     WebGetDeviceCounts();
 
     if (Web.buttons_non_light_non_shutter) {   // Any non light AND non shutter button - Show toggle buttons
-      WSContentSend_P(HTTP_TABLE100);      // "<table style='width:100%%'>"
-      WSContentSend_P(PSTR("<tr>"));
-
-#ifdef USE_SONOFF_IFAN
-      if (IsModuleIfan()) {
-        WSContentSend_P(HTTP_DEVICE_CONTROL, 36, 1, 1,
-          (strlen(SettingsText(SET_BUTTON1))) ? SettingsTextEscaped(SET_BUTTON1).c_str() : PSTR(D_BUTTON_TOGGLE),
-          "");
-        for (uint32_t i = 0; i < MaxFanspeed(); i++) {
-          snprintf_P(stemp, sizeof(stemp), PSTR("%d"), i);
-          WSContentSend_P(HTTP_DEVICE_CONTROL, 16, i +2, i +2,
-            (strlen(SettingsText(SET_BUTTON2 + i))) ? SettingsTextEscaped(SET_BUTTON2 + i).c_str() : stemp,
-            "");
-        }
-      } else {
-#endif  // USE_SONOFF_IFAN
-
-        const uint32_t max_columns = 8;
-        uint32_t rows = Web.buttons_non_light_non_shutter / max_columns;
-        if (Web.buttons_non_light_non_shutter % max_columns) { rows++; }
-        uint32_t cols = Web.buttons_non_light_non_shutter / rows;
-        if (Web.buttons_non_light_non_shutter % rows) { cols++; }
-
-        uint32_t button_ptr = 0;
-        for (uint32_t button_idx = 1; button_idx <= TasmotaGlobal.devices_present; button_idx++) {
-          if (bitRead(Web.light_shutter_button_mask, button_idx -1)) { continue; }  // Skip non-sequential light and/or shutter button
-          bool set_button = ((button_idx <= MAX_BUTTON_TEXT) && strlen(GetWebButton(button_idx -1)));
-          snprintf_P(stemp, sizeof(stemp), PSTR(" %d"), button_idx);
-          WSContentSend_P(HTTP_DEVICE_CONTROL, 100 / cols, button_idx, button_idx,
-            (set_button) ? HtmlEscape(GetWebButton(button_idx -1)).c_str() : (cols < 5) ? PSTR(D_BUTTON_TOGGLE) : "",
-            (set_button) ? "" : (TasmotaGlobal.devices_present > 1) ? stemp : "");
-          button_ptr++;
-          if (0 == button_ptr % cols) { WSContentSend_P(PSTR("</tr><tr>")); }
-        }
-#ifdef USE_SONOFF_IFAN
+      uint32_t visible_non_light_buttons = 0;
+      for (uint32_t button_idx = 1; button_idx <= TasmotaGlobal.devices_present; button_idx++) {
+        if (bitRead(Web.light_shutter_button_mask, button_idx -1)) { continue; }  // Skip non-sequential light and/or shutter button
+        if (IsWebButtonHidden(button_idx)) { continue; }                           // Hide placeholder WebButton labels like "-"
+        visible_non_light_buttons++;
       }
+
+      if (!visible_non_light_buttons) {
+        // Nothing to render in this section.
+      } else {
+        WSContentSend_P(HTTP_TABLE100);      // "<table style='width:100%%'>"
+        WSContentSend_P(PSTR("<tr>"));
+
+#ifdef USE_SONOFF_IFAN
+        if (IsModuleIfan()) {
+          WSContentSend_P(HTTP_DEVICE_CONTROL, 36, 1, 1,
+            (strlen(SettingsText(SET_BUTTON1))) ? SettingsTextEscaped(SET_BUTTON1).c_str() : PSTR(D_BUTTON_TOGGLE),
+            "");
+          for (uint32_t i = 0; i < MaxFanspeed(); i++) {
+            snprintf_P(stemp, sizeof(stemp), PSTR("%d"), i);
+            WSContentSend_P(HTTP_DEVICE_CONTROL, 16, i +2, i +2,
+              (strlen(SettingsText(SET_BUTTON2 + i))) ? SettingsTextEscaped(SET_BUTTON2 + i).c_str() : stemp,
+              "");
+          }
+        } else {
 #endif  // USE_SONOFF_IFAN
 
-      WSContentSend_P(PSTR("</tr></table>"));
+          const uint32_t max_columns = 8;
+          uint32_t rows = visible_non_light_buttons / max_columns;
+          if (visible_non_light_buttons % max_columns) { rows++; }
+          uint32_t cols = visible_non_light_buttons / rows;
+          if (visible_non_light_buttons % rows) { cols++; }
+
+          uint32_t button_ptr = 0;
+          for (uint32_t button_idx = 1; button_idx <= TasmotaGlobal.devices_present; button_idx++) {
+            if (bitRead(Web.light_shutter_button_mask, button_idx -1)) { continue; }  // Skip non-sequential light and/or shutter button
+            if (IsWebButtonHidden(button_idx)) { continue; }                           // Hide placeholder WebButton labels like "-"
+            bool set_button = ((button_idx <= MAX_BUTTON_TEXT) && strlen(GetWebButton(button_idx -1)));
+            snprintf_P(stemp, sizeof(stemp), PSTR(" %d"), button_idx);
+            WSContentSend_P(HTTP_DEVICE_CONTROL, 100 / cols, button_idx, button_idx,
+              (set_button) ? HtmlEscape(GetWebButton(button_idx -1)).c_str() : (cols < 5) ? PSTR(D_BUTTON_TOGGLE) : "",
+              (set_button) ? "" : (TasmotaGlobal.devices_present > 1) ? stemp : "");
+            button_ptr++;
+            if (0 == button_ptr % cols) { WSContentSend_P(PSTR("</tr><tr>")); }
+          }
+#ifdef USE_SONOFF_IFAN
+        }
+#endif  // USE_SONOFF_IFAN
+
+        WSContentSend_P(PSTR("</tr></table>"));
+      }
     }
 
 #ifdef USE_SHUTTER

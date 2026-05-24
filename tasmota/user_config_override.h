@@ -34,4 +34,7 @@
 #undef MQTT_HOST
 #define MQTT_HOST              "10.10.2.3"
 
+// Load external CSS for Tasmota web UI.
+#define EXTERNAL_WEB_CSS_URL   "https://assets.cossth.com/tasmota/styles.css"
+
 #endif  // _USER_CONFIG_OVERRIDE_H_
