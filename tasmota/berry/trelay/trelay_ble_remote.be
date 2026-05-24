@@ -1,7 +1,7 @@
 # TRelay S3 BLE remote bridge
 # - Applies initial FriendlyName/WebButton defaults once
 # - Listens for BLE-related MQTT telemetry and maps remote actions to relays
-# - Handles Smart Light inverted logic (Power3)
+# - Smart Light inversion is handled in Shift595 driver (POWER4 only)
 
 import mqtt
 import string
@@ -169,7 +169,7 @@ class TRelayBleRemote : Driver
     end
 
     # Button map -> Power channels
-    # 1: Power Socket, 2: White Light, 3: Smart Light (inverted), 4: Fan,
+    # 1: Power Socket, 2: White Light, 3: Smart Light, 4: Fan,
     # 5: Inverter Socket, 6: Green LED, 7: Red LED
     if btn == 1
       self.apply_power(2, "toggle")
@@ -208,12 +208,6 @@ class TRelayBleRemote : Driver
       target = false
     else
       target = !current
-    end
-
-    # Smart Light is on Power3 and is electrically inverted on this hardware.
-    # Invert command intent so physical output matches the requested action.
-    if channel == 3
-      target = !target
     end
 
     tasmota.set_power(i, target)

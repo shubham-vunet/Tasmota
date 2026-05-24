@@ -15,6 +15,8 @@
 #define USE_SHIFT595
 #undef SHIFT595_DEVICE_COUNT
 #define SHIFT595_DEVICE_COUNT 1
+// Smart Light is wired inverted (FriendlyName4 / POWER4).
+#define SHIFT595_INVERT_POWER_MASK 0x00000008
 
 // Force the custom module so the required GPIO assignments are present on boot.
 #undef MODULE
@@ -27,5 +29,9 @@
 // are applied by Berry on first boot from autoexec.be.
 #undef FRIENDLY_NAME
 #define FRIENDLY_NAME          "TRelay S3"
+
+// Preserve old static MQTT behavior with updated broker host.
+#undef MQTT_HOST
+#define MQTT_HOST              "10.10.2.3"
 
 #endif  // _USER_CONFIG_OVERRIDE_H_

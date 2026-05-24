@@ -21,6 +21,13 @@
 
 #define XDRV_60           60
 
+// Optional bitmask to invert selected logical POWER channels for Shift595 only.
+// Bit0 => POWER1, Bit1 => POWER2 ... Bit31 => POWER32.
+// Example: 0x00000008 inverts only POWER4.
+#ifndef SHIFT595_INVERT_POWER_MASK
+#define SHIFT595_INVERT_POWER_MASK 0x00000000
+#endif
+
 const char kShift595Commands[] PROGMEM = "|" D_CMND_SHIFT595_DEVICE_COUNT ;
 void (* const Shift595Command[])(void) PROGMEM = { &CmndShift595Devices };
 
@@ -108,6 +115,9 @@ void Shift595SwitchRelay(void) {
     uint32_t relay_state = 0;                          // Unused state
     if (i >= relay_offset) {
       relay_state = bitRead(rpower, power_bit);        // Shift-in from high to low
+      if (bitRead(SHIFT595_INVERT_POWER_MASK, power_bit)) {
+        relay_state = !relay_state;
+      }
       power_bit--;
     }
     digitalWrite(Shift595->pinSER, Settings->flag5.shift595_invert_outputs ? !relay_state : relay_state);  // SetOption133 - (Shift595) Invert outputs of 74x595 shift registers
