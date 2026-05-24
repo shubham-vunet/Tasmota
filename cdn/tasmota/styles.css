@@ -1,28 +1,38 @@
-/*
-  Cossth Tasmota UI Theme
-  Target: stock Tasmota WebUI markup (no HTML template changes required)
-*/
+/* ============================================================================
+   Cossth Tasmota Theme V3
+   - Clean control-panel style
+   - No HTML changes required
+   - Compatible with cdn/tasmota/script.js helper classes
+   ============================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap');
 
 :root {
-  --ux-bg-top: #e9f1ff;
-  --ux-bg-bottom: #f6f9ff;
-  --ux-surface: #ffffff;
-  --ux-surface-2: #f3f7ff;
-  --ux-text: #12203a;
-  --ux-text-dim: #5f6f8c;
-  --ux-accent: #2f7df6;
-  --ux-accent-2: #22b5ff;
-  --ux-success: #1aa870;
-  --ux-off: #9ba8bf;
-  --ux-border: rgba(31, 66, 138, 0.14);
-  --ux-shadow-lg: 0 30px 70px rgba(22, 57, 122, 0.20);
-  --ux-shadow-md: 0 14px 30px rgba(20, 64, 156, 0.14);
-  --ux-shadow-sm: 0 8px 16px rgba(20, 64, 156, 0.10);
-  --ux-radius-xl: 28px;
-  --ux-radius-lg: 18px;
-  --ux-radius-md: 14px;
+  --ux-bg-1: #081120;
+  --ux-bg-2: #122038;
+  --ux-panel: #162845;
+  --ux-panel-2: #1b3153;
+  --ux-panel-3: #213a63;
+
+  --ux-border: #2f4f7e;
+  --ux-border-soft: rgba(134, 170, 232, 0.24);
+
+  --ux-text: #f4f8ff;
+  --ux-text-dim: #9eb2d6;
+
+  --ux-on-1: #39b8ff;
+  --ux-on-2: #2f7dff;
+  --ux-off-1: #324767;
+  --ux-off-2: #273b58;
+
+  --ux-good: #48e0a1;
+  --ux-warn: #ff8f9f;
+
+  --ux-shadow-lg: 0 14px 34px rgba(2, 8, 20, 0.46);
+  --ux-shadow-md: 0 8px 22px rgba(5, 12, 28, 0.42);
+  --ux-radius-xl: 22px;
+  --ux-radius-lg: 14px;
+  --ux-radius-md: 10px;
 }
 
 html.cossth-modern-ui,
@@ -32,286 +42,256 @@ html.cossth-modern-ui body {
 
 html.cossth-modern-ui body {
   margin: 0;
-  padding: 22px 12px 28px;
-  font-family: 'Manrope', 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
-  color: var(--ux-text);
+  padding: 14px;
+  font-family: 'Manrope', 'Segoe UI', system-ui, sans-serif !important;
+  color: var(--ux-text) !important;
   background:
-    radial-gradient(1200px 540px at -10% -20%, rgba(33, 119, 255, 0.23), transparent 58%),
-    radial-gradient(980px 520px at 110% 120%, rgba(53, 205, 255, 0.20), transparent 60%),
-    linear-gradient(180deg, var(--ux-bg-top), var(--ux-bg-bottom));
+    radial-gradient(800px 420px at 0% 0%, #1d3f79 0%, transparent 65%),
+    radial-gradient(700px 360px at 100% 100%, #11436c 0%, transparent 66%),
+    linear-gradient(150deg, var(--ux-bg-1) 0%, var(--ux-bg-2) 100%) !important;
 }
 
-html.cossth-modern-ui body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(46, 90, 170, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(46, 90, 170, 0.05) 1px, transparent 1px);
-  background-size: 28px 28px;
-  opacity: 0.24;
-}
-
-html.cossth-modern-ui body > div {
-  box-sizing: border-box;
-  width: min(980px, 100%);
-  margin: 0 auto;
-  padding: 14px 14px 18px !important;
-  border-radius: var(--ux-radius-xl);
-  border: 1px solid var(--ux-border);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(245, 250, 255, 0.90));
+html.cossth-modern-ui body > div[style*='display:inline-block'] {
+  width: min(1020px, 100%) !important;
+  margin: 0 auto !important;
+  padding: 12px 12px 16px !important;
+  border: 1px solid var(--ux-border-soft) !important;
+  border-radius: var(--ux-radius-xl) !important;
+  background: linear-gradient(180deg, rgba(23, 40, 68, 0.96), rgba(19, 34, 60, 0.96)) !important;
   box-shadow: var(--ux-shadow-lg);
-  color: var(--ux-text);
-}
-
-html.cossth-modern-ui body > div > div:first-child {
-  text-align: left !important;
-  padding: 6px 8px 8px;
-  border-radius: 20px;
-  background: linear-gradient(160deg, #f8fbff, #eef5ff);
-  border: 1px solid var(--ux-border);
-}
-
-html.cossth-modern-ui h2,
-html.cossth-modern-ui h3 {
-  margin: 0;
-  letter-spacing: 0.01em;
-  color: var(--ux-text);
+  box-sizing: border-box;
 }
 
 html.cossth-modern-ui h3 {
-  margin-top: 6px;
-  font-size: clamp(1.0rem, 2.2vw, 1.2rem);
+  margin: 6px 0 0;
+  color: var(--ux-text-dim) !important;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: #365174;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 html.cossth-modern-ui h2 {
-  margin-top: 4px;
-  margin-bottom: 2px;
-  font-size: clamp(1.32rem, 3.7vw, 1.85rem);
+  margin: 4px 0 8px;
+  color: var(--ux-text) !important;
+  font-size: clamp(1.28rem, 3.8vw, 1.82rem);
   font-weight: 800;
-}
-
-html.cossth-modern-ui #l1 {
-  margin-top: 8px;
+  letter-spacing: 0.01em;
 }
 
 html.cossth-modern-ui table {
   border-collapse: separate;
-  border-spacing: 8px;
-  margin: 6px 0;
+  border-spacing: 7px;
+  margin: 7px 0;
 }
 
-html.cossth-modern-ui td,
-html.cossth-modern-ui th {
-  border-radius: var(--ux-radius-md);
-}
-
-html.cossth-modern-ui th {
-  padding: 10px 14px;
-  text-align: left;
-  font-size: 0.97rem;
-  font-weight: 700;
-  color: #2a3f5e;
-  background: linear-gradient(180deg, #f8fbff, #edf4ff);
+html.cossth-modern-ui .ts-status-grid th,
+html.cossth-modern-ui .ts-status-grid td {
+  background: linear-gradient(180deg, var(--ux-panel-2), var(--ux-panel));
   border: 1px solid var(--ux-border);
+  border-radius: var(--ux-radius-md);
+  padding: 9px 11px;
 }
 
-html.cossth-modern-ui td {
-  color: var(--ux-text);
+html.cossth-modern-ui .ts-status-grid th {
+  text-align: left;
+  font-size: 0.93rem;
+  font-weight: 700;
 }
 
-html.cossth-modern-ui hr {
-  border: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(37, 81, 162, 0.38), transparent);
+html.cossth-modern-ui .ts-status-grid td {
+  text-align: right;
+  color: var(--ux-text-dim);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 html.cossth-modern-ui .ts-state-grid td {
-  padding: 10px 6px;
-  background: linear-gradient(180deg, #f7fbff, #eff5ff);
+  background: linear-gradient(180deg, var(--ux-panel-2), var(--ux-panel));
   border: 1px solid var(--ux-border);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-radius: var(--ux-radius-md);
+  box-shadow: inset 0 1px 0 rgba(180, 210, 255, 0.05);
+  color: #8ea4cb;
+  padding: 10px 5px;
+  font-size: clamp(1.05rem, 3.5vw, 1.32rem) !important;
+  font-weight: 800;
 }
 
 html.cossth-modern-ui .ts-state-grid td.ts-on {
-  color: var(--ux-success);
+  color: var(--ux-good);
+  text-shadow: 0 0 14px rgba(72, 224, 161, 0.28);
 }
 
-html.cossth-modern-ui .ts-relay-grid td,
-html.cossth-modern-ui .ts-main-actions td {
+html.cossth-modern-ui .ts-relay-grid td {
   padding: 0;
 }
 
 html.cossth-modern-ui button {
   position: relative;
   overflow: hidden;
-  border: 0;
-  border-radius: var(--ux-radius-md);
-  min-height: 52px;
-  font-size: clamp(1rem, 2.2vw, 1.05rem);
-  font-weight: 700;
-  letter-spacing: 0.015em;
-  color: #fff;
-  background: linear-gradient(135deg, var(--ux-accent), var(--ux-accent-2)) !important;
-  box-shadow: var(--ux-shadow-sm);
-  transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+  border: 1px solid rgba(177, 205, 255, 0.18) !important;
+  border-radius: var(--ux-radius-md) !important;
+  min-height: 50px;
+  font-size: clamp(0.92rem, 2.2vw, 1rem) !important;
+  font-weight: 800 !important;
+  color: #f7fbff !important;
+  background: linear-gradient(135deg, var(--ux-on-1), var(--ux-on-2)) !important;
+  box-shadow: var(--ux-shadow-md);
+  transition: transform 120ms ease, filter 120ms ease;
 }
 
 html.cossth-modern-ui button:hover {
   transform: translateY(-1px);
-  filter: brightness(1.03);
-  box-shadow: var(--ux-shadow-md);
+  filter: brightness(1.05);
 }
 
 html.cossth-modern-ui button:active {
-  transform: translateY(1px) scale(0.99);
+  transform: translateY(1px);
 }
 
 html.cossth-modern-ui button.is-off {
-  color: #e9f0ff;
-  background: linear-gradient(140deg, #95a4bf, #7c8ca8) !important;
-  box-shadow: 0 10px 20px rgba(67, 84, 116, 0.22);
-}
-
-html.cossth-modern-ui .ts-main-action {
-  min-height: 50px;
-  font-size: 1rem;
-  border-radius: var(--ux-radius-md);
-}
-
-html.cossth-modern-ui .ts-main-action.bred {
-  background: linear-gradient(135deg, #e35778, #c84063) !important;
+  color: #bfd0ee !important;
+  background: linear-gradient(135deg, var(--ux-off-1), var(--ux-off-2)) !important;
+  box-shadow: 0 8px 18px rgba(5, 11, 25, 0.42);
 }
 
 html.cossth-modern-ui .r {
-  border-radius: var(--ux-radius-md) !important;
   border: 1px solid var(--ux-border);
-  background: linear-gradient(180deg, #f7fbff, #eef5ff) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
-}
-
-html.cossth-modern-ui input,
-html.cossth-modern-ui select,
-html.cossth-modern-ui textarea {
-  border: 1px solid rgba(58, 96, 174, 0.22);
-  border-radius: 12px;
-  color: var(--ux-text);
-  background: #f9fbff;
+  border-radius: 999px !important;
+  box-shadow: inset 0 1px 6px rgba(4, 10, 22, 0.3);
 }
 
 html.cossth-modern-ui input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
+  background: transparent !important;
+}
+
+html.cossth-modern-ui input[type='range']::-webkit-slider-runnable-track {
   height: 10px;
-  border: 0;
   border-radius: 999px;
-  background: linear-gradient(90deg, #4b97ff, #4ad7ff);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+html.cossth-modern-ui input[type='range']::-moz-range-track {
+  height: 10px;
+  border-radius: 999px;
 }
 
 html.cossth-modern-ui input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
-  appearance: none;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
+  margin-top: -5px;
   border-radius: 50%;
-  border: 2px solid #fff;
-  background: radial-gradient(circle at 35% 35%, #ffffff, #bfd7ff);
-  box-shadow: 0 3px 10px rgba(23, 64, 133, 0.35);
+  border: 2px solid #ffffff;
+  background: #1a3560;
 }
 
 html.cossth-modern-ui input[type='range']::-moz-range-thumb {
-  width: 22px;
-  height: 22px;
-  border: 2px solid #fff;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ffffff, #bfd7ff);
-  box-shadow: 0 3px 10px rgba(23, 64, 133, 0.35);
+  border: 2px solid #ffffff;
+  background: #1a3560;
 }
 
-html.cossth-modern-ui span[style*='border-style:solid'] {
-  border-radius: 999px !important;
-  padding: 4px 10px !important;
-  border-color: rgba(38, 91, 176, 0.25) !important;
-  background: rgba(239, 246, 255, 0.8);
-  color: #325682;
-  font-size: 11px;
-}
-
-html.cossth-modern-ui a {
-  color: #285eb5;
-}
-
-html.cossth-modern-ui a:hover {
-  color: #1f4f9e;
-}
-
-html.cossth-modern-ui p + form[id^='but'] {
-  margin-top: 6px;
+html.cossth-modern-ui .ts-main-actions {
+  margin-top: 10px;
 }
 
 html.cossth-modern-ui form[id^='but'] {
   margin: 0;
 }
 
-html.cossth-modern-ui #t {
-  font-size: 0.9rem;
-  color: var(--ux-text-dim);
+html.cossth-modern-ui .ts-main-action {
+  justify-content: flex-start;
+  padding-inline: 14px;
+  min-height: 46px;
+  font-size: 0.95rem !important;
+  background: linear-gradient(135deg, #334f7a, #2a4368) !important;
+  border: 1px solid var(--ux-border) !important;
+}
+
+html.cossth-modern-ui .ts-main-action.bred {
+  justify-content: center;
+  background: linear-gradient(135deg, #d94f63, #c13d54) !important;
+  border-color: rgba(255, 173, 189, 0.32) !important;
+}
+
+html.cossth-modern-ui span[style*='border-style:solid'] {
+  border-radius: 999px !important;
+  border-color: rgba(73, 224, 163, 0.45) !important;
+  background: rgba(31, 165, 108, 0.22);
+  color: #67efb8 !important;
+  padding: 3px 9px !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+html.cossth-modern-ui div[style*='text-align:right;font-size:11px'] {
+  margin-top: 14px !important;
+  padding-top: 12px;
+  border-top: 1px solid var(--ux-border);
+  text-align: center !important;
+  color: #8ea4cc !important;
+  font-size: 0.75rem !important;
+}
+
+html.cossth-modern-ui div[style*='text-align:right;font-size:11px'] a {
+  color: #8fb6ff !important;
+  text-decoration: none;
+}
+
+html.cossth-modern-ui div[style*='text-align:right;font-size:11px'] a:hover {
+  text-decoration: underline;
 }
 
 html.cossth-modern-ui .ts-ripple {
   position: absolute;
   border-radius: 999px;
   transform: scale(0);
-  animation: ts-ripple 420ms ease-out;
-  background: rgba(255, 255, 255, 0.45);
+  animation: ts-ripple 400ms ease-out;
+  background: rgba(255, 255, 255, 0.34);
   pointer-events: none;
 }
 
 @keyframes ts-ripple {
   to {
-    transform: scale(8);
+    transform: scale(7);
     opacity: 0;
   }
 }
 
 @media (max-width: 760px) {
   html.cossth-modern-ui body {
-    padding: 10px 8px 16px;
+    padding: 8px;
   }
 
-  html.cossth-modern-ui body > div {
-    border-radius: 20px;
-    padding: 10px 8px 14px !important;
+  html.cossth-modern-ui body > div[style*='display:inline-block'] {
+    border-radius: 14px !important;
+    padding: 9px 8px 12px !important;
   }
 
   html.cossth-modern-ui table {
-    border-spacing: 6px;
+    border-spacing: 5px;
   }
 
   html.cossth-modern-ui button {
-    min-height: 48px;
-    font-size: 0.97rem;
+    min-height: 44px;
   }
 
-  html.cossth-modern-ui h2 {
-    font-size: 1.34rem;
-  }
-
-  html.cossth-modern-ui h3 {
-    font-size: 0.95rem;
+  html.cossth-modern-ui .ts-main-action {
+    min-height: 42px;
+    font-size: 0.9rem !important;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html.cossth-modern-ui * {
-    animation-duration: 0ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0ms !important;
-    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
   }
 }

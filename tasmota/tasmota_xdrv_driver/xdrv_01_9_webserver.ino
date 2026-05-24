@@ -988,9 +988,6 @@ void WSContentStart_P(const char* title, bool auth) {
       PSTR(D_HTML_LANGUAGE), 
       SettingsTextEscaped(SET_DEVICENAME).c_str(), 
       title);
-    if (strlen(EXTERNAL_WEB_CSS_URL)) {
-      WSContentSend_P(PSTR("<link rel='stylesheet' href='%s'>"), EXTERNAL_WEB_CSS_URL);
-    }
   }
 }
 
@@ -1013,6 +1010,9 @@ void WSContentSendStyle_P(const char* formatP, ...) {
 #else
   WSContentSend_P(HTTP_HEAD_LAST_SCRIPT);
 #endif
+  if (strlen(EXTERNAL_WEB_CSS_URL)) {
+    WSContentSend_P(PSTR("<link rel='stylesheet' href='%s'>"), EXTERNAL_WEB_CSS_URL);
+  }
 
   // Output style root colors by names
   WSContentSend_P(HTTP_HEAD_STYLE_ROOT_COLOR,
