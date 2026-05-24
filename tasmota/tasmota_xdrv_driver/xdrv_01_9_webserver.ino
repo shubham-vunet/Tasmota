@@ -988,6 +988,9 @@ void WSContentStart_P(const char* title, bool auth) {
       PSTR(D_HTML_LANGUAGE), 
       SettingsTextEscaped(SET_DEVICENAME).c_str(), 
       title);
+    if (strlen(EXTERNAL_WEB_CSS_URL)) {
+      WSContentSend_P(PSTR("<link rel='stylesheet' href='%s'>"), EXTERNAL_WEB_CSS_URL);
+    }
   }
 }
 
@@ -1054,9 +1057,6 @@ void WSContentSendStyle_P(const char* formatP, ...) {
   if (strlen(SettingsText(SET_CANVAS))) {
 //    WSContentSend_P(PSTR("body{background:%s;background-repeat:no-repeat;background-attachment:fixed;background-size:cover;}"), SettingsText(SET_CANVAS));
     WSContentSend_P(PSTR("body{background:%s 0 0 / cover no-repeat fixed;}"), SettingsText(SET_CANVAS));
-  }
-  if (strlen(EXTERNAL_WEB_CSS_URL)) {
-    WSContentSend_P(PSTR("@import url('%s');"), EXTERNAL_WEB_CSS_URL);
   }
 #ifdef FIRMWARE_MINIMAL
   WSContentSend_P(HTTP_HEAD_STYLE3_MINIMAL,
