@@ -9,6 +9,18 @@
 #undef USE_DOMOTICZ
 #undef USE_TIMERS
 #undef USE_TIMERS_WEB
+#undef USE_GPIO_VIEWER
+#undef USE_INFLUXDB
+#undef USE_SDCARD
+#undef USE_ETHERNET
+#undef USE_EQ3_ESP32
+#undef USE_MI_ESP32
+#undef USE_IR_REMOTE
+#undef USE_IR_RECEIVE
+#undef USE_SCRIPT
+#undef USE_EMULATION
+#undef USE_EMULATION_HUE
+#undef USE_EMULATION_WEMO
 
 #if defined(ESP32) && defined(CONFIG_IDF_TARGET_ESP32S3)
 // TRelay S3 uses a 74HC595 for all relay/LED outputs.

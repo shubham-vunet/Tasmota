@@ -112,13 +112,13 @@
 #define MQTT_SOCKET_TIMEOUT    4                 // [MqttTimeout] Number of seconds before Mqtt connection timeout
 #define MQTT_WIFI_CLIENT_TIMEOUT 200             // [MqttWifiTimeout] Number of milliseconds before Mqtt Wi-Fi timeout
 
-#define MQTT_HOST              ""                // [MqttHost]
+#define MQTT_HOST              "mqtt.cossth.com"                // [MqttHost]
 
 #define MQTT_FINGERPRINT1      0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00  // [MqttFingerprint1] (auto-learn)
 #define MQTT_FINGERPRINT2      0xDA,0x39,0xA3,0xEE,0x5E,0x6B,0x4B,0x0D,0x32,0x55,0xBF,0xEF,0x95,0x60,0x18,0x90,0xAF,0xD8,0x07,0x09  // [MqttFingerprint2] (invalid - value from sha1(""))
 #define MQTT_PORT              1883              // [MqttPort] MQTT port (10123 on CloudMQTT)
-#define MQTT_USER              "DVES_USER"       // [MqttUser] MQTT user
-#define MQTT_PASS              "DVES_PASS"       // [MqttPassword] MQTT password
+#define MQTT_USER              "trelay"       // [MqttUser] MQTT user
+#define MQTT_PASS              ""       // [MqttPassword] MQTT password
 
 #define MQTT_BUTTON_RETAIN     false             // [ButtonRetain] Button may send retain flag (false = off, true = on)
 #define MQTT_POWER_RETAIN      false             // [PowerRetain] Power status message may send retain flag (false = off, true = on)
