@@ -21,6 +21,13 @@
 #undef USE_EMULATION
 #undef USE_EMULATION_HUE
 #undef USE_EMULATION_WEMO
+#undef USE_AUTOCONF
+#undef USE_EXTENSION_MANAGER
+#undef USE_BERRY
+#undef USE_SYSLOG
+#undef USE_DISPLAY
+#undef USE_UFILESYS
+#undef USE_DEBUG_DRIVER
 
 #if defined(ESP32) && defined(CONFIG_IDF_TARGET_ESP32S3)
 // TRelay S3 uses a 74HC595 for all relay/LED outputs.
